@@ -2,6 +2,12 @@
   "name": "universities-gamanza",
   "version": "0.1.0",
   "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged",
+      "post-commit": "git update-index -g"
+    }
+  },
   "dependencies": {
     "@mui/icons-material": "^5.11.16",
     "@reduxjs/toolkit": "^1.9.5",
