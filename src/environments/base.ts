@@ -4,7 +4,7 @@ export default function baseEnv(baseApi: string) {
         baseRoute: '/',
       },
       api: {
-        
+        universities: `${baseApi}/search`
       },
       isProduction: true,
       isDevelopment: false,

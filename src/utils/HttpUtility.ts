@@ -74,14 +74,13 @@ export const _request = async (restRequest: Partial<Request>, config?: AxiosRequ
         };
         const [axiosResponse] = await Promise.all([axios(axiosRequestConfig), _delay()]);
 
-        const { status, data, request } = axiosResponse;
+        const { data } = axiosResponse;
 
         if (data.success === false) {
             return _fillInErrorWithDefaults(
                 {
                     message: data.errors.join(' - '),
-                },
-                restRequest
+                }
             );
         }
 
@@ -91,24 +90,22 @@ export const _request = async (restRequest: Partial<Request>, config?: AxiosRequ
     } catch (error: any) {
         if (error.response) {
             // The request was made and the server responded with a status code that falls out of the range of 2xx
-            const { status, statusText, data } = error.response;
+            const { statusText, data } = error.response;
             const errors: string[] = data.hasOwnProperty('errors') ? [statusText, ...data.errors] : [statusText];
 
             return _fillInErrorWithDefaults(
                 {
                     message: errors.filter(Boolean).join(' - '),
-                },
-                restRequest
+                }
             );
         } else if (error.request) {
             // The request was made but no response was received `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
-            const { status, statusText, responseURL } = error.request;
+            const { statusText } = error.request;
 
             return _fillInErrorWithDefaults(
                 {
                     message: statusText,
-                },
-                restRequest
+                }
             );
         }
 
@@ -116,13 +113,12 @@ export const _request = async (restRequest: Partial<Request>, config?: AxiosRequ
         return _fillInErrorWithDefaults(
             {
                 message: error.message,
-            },
-            restRequest
+            }
         );
     }
 };
 
-const _fillInErrorWithDefaults = (error: Partial<HttpErrorResponseModel>, request: Partial<Request>): HttpErrorResponseModel => {
+const _fillInErrorWithDefaults = (error: Partial<HttpErrorResponseModel>): HttpErrorResponseModel => {
     const model = new HttpErrorResponseModel();
 
     model.message = error.message || 'Error requesting data';

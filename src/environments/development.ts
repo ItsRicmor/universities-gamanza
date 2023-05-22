@@ -1,6 +1,6 @@
 import environment, { Environment } from './base';
 
-const baseApi = 'https://api.tvmaze.com';
+const baseApi = 'http://universities.hipolabs.com';
 const env = environment(baseApi);
 
 const developmentEnv: Environment = {

@@ -5,7 +5,7 @@ import environment, { Environment } from './base';
  * You shouldn't have override anything.
  */
 
-const baseApi = 'https://api.tvmaze.com';
+const baseApi = 'http://universities.hipolabs.com';
 const env = environment(baseApi);
 
 const productionEnv: Environment = {

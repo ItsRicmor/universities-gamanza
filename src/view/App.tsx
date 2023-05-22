@@ -1,26 +1,37 @@
+import { useEffect } from 'react';
 import './App.css';
-import environment from 'environment';
-import logo from './logo.svg';
+
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import { Layout } from "view/layout/Layout";
+import { HomePage } from "view/pages/home";
+import { NoMatch } from "view/pages/no-match";
+import { fetchUniversities } from 'state/universities/universities.effects';
+import { AppDispatch } from 'state';
+import { useDispatch } from 'react-redux';
+import { CountryPage } from './pages/country';
+
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: ':country', element: <CountryPage /> },
+      { path: 'individual/:country/:university', element: <CountryPage /> },
+      { path: "*", element: <NoMatch /> },
+    ]
+  }
+]);
 
 function App() {
-  console.log(environment.a)
+  const dispatch = useDispatch<AppDispatch>();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <RouterProvider router={router} />
   );
 }
 
