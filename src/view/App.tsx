@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
-import './App.css';
-
+import { RouteEnum } from 'constants/RouteEnum';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -8,28 +6,38 @@ import {
 import { Layout } from "view/layout/Layout";
 import { HomePage } from "view/pages/home";
 import { NoMatch } from "view/pages/no-match";
-import { fetchUniversities } from 'state/universities/universities.effects';
-import { AppDispatch } from 'state';
-import { useDispatch } from 'react-redux';
+import { BreadcrumbItem } from './components/Breadcrumbs/BreadcrumbItem';
 import { CountryPage } from './pages/country';
 
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: RouteEnum.Home,
     element: <Layout />,
+    handle: {
+      Crumb: (isActive: boolean) => <BreadcrumbItem isActive={isActive} to={RouteEnum.Home}>Home</BreadcrumbItem>,
+    },
     children: [
       { index: true, element: <HomePage /> },
-      { path: ':country', element: <CountryPage /> },
-      { path: 'individual/:country/:university', element: <CountryPage /> },
-      { path: "*", element: <NoMatch /> },
+      {
+        path: ':country',
+        element: <CountryPage />,
+        handle: {
+          Crumb: (isActive: boolean, country: string, __: string) => <BreadcrumbItem isActive={isActive} to={`/${country}`}>Country</BreadcrumbItem>,
+        }
+      },
+      {
+        path: "*",
+        element: <NoMatch />,
+        handle: {
+          Crumb: () => <BreadcrumbItem isActive>"No Match"</BreadcrumbItem>,
+        },
+      }
     ]
   }
 ]);
 
 function App() {
-  const dispatch = useDispatch<AppDispatch>();
-
   return (
     <RouterProvider router={router} />
   );

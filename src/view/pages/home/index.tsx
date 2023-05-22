@@ -1,42 +1,36 @@
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
-import { universityItemsSelector } from 'selectors/university.selector';
-import { AppDispatch, RootState } from "state";
+import { universityIsLoadingSelector, universityItemsSelector } from 'selectors/university.selector';
+import { AppDispatch } from "state";
 import { fetchUniversities } from 'state/universities/universities.effects';
+import { capitalizeToSlug } from 'utils/StringUtility';
 import { UniversityTable } from 'view/components/UniversityTable';
 
 export const HomePage = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
-    const [name, setName] = useState('')
+    const [name, setName] = useState('');
 
     const universities = useSelector(universityItemsSelector);
+    const isLoading = useSelector(universityIsLoadingSelector);
 
     useEffect(() => {
         dispatch(fetchUniversities({ unique: true, name }))
     }, [dispatch, name])
 
     const goToCountry = (country: string) => {
-        navigate(country)
+        navigate(capitalizeToSlug(country));
     }
 
     return (
-        <>
-            <Box
-                component="form"
-                autoComplete="off"
-                display="flex"
-                justifyContent="center"
-                marginBottom="30px"
-                width="100%"
-            >
-                <TextField fullWidth label="Search" variant="outlined" value={name} onChange={({ target }) => setName(target.value)} />
-            </Box>
-            <UniversityTable items={universities} onRowDoubleClick={({ row }) => goToCountry(row.country)} />
-        </>
+        <UniversityTable
+            isLoading={isLoading}
+            items={universities}
+            name={name}
+            onNameChange={setName}
+            onRowDoubleClick={({ row }) => goToCountry(row.country)}
+        />
     )
 }

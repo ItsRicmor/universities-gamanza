@@ -1,27 +1,35 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
-import { universityItemsSelector } from 'selectors/university.selector';
+import { useParams } from 'react-router-dom';
+import { universityIsLoadingSelector, universityItemsSelector } from 'selectors/university.selector';
 import { AppDispatch } from 'state';
 import { fetchUniversities } from 'state/universities/universities.effects';
+import { slugToCapitalize } from 'utils/StringUtility';
+import { UniversityCarousel } from 'view/components/UniversityCarousel';
 import { UniversityTable } from 'view/components/UniversityTable';
 
 export const CountryPage = () => {
     const { country } = useParams();
-    const navigate = useNavigate();
-    const universities = useSelector(universityItemsSelector);
     const dispatch = useDispatch<AppDispatch>();
 
-    useEffect(() => {
-        dispatch(fetchUniversities({ country }))
-    }, [dispatch])
+    const [name, setName] = useState('');
 
-    const goToUniversity = (name: string) => {
-        console.log(name)
-        navigate(`/individual/${country}/${name.replace(' ', '-')}`);
-    }
+    const universities = useSelector(universityItemsSelector);
+    const isLoading = useSelector(universityIsLoadingSelector);
+
+    useEffect(() => {
+        dispatch(fetchUniversities({ country: slugToCapitalize(country as string), name }))
+    }, [dispatch, name, country])
 
     return (
-        <UniversityTable items={universities} onRowDoubleClick={({ row }) => goToUniversity(row.name)} />
+        <>
+            <UniversityTable
+                isLoading={isLoading}
+                items={universities}
+                name={name}
+                onNameChange={setName}
+            />
+            <UniversityCarousel />
+        </>
     )
 }

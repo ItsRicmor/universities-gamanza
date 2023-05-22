@@ -1,7 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { IUniversity } from 'models/IUniversity';
 import { fetchUniversities } from './universities.effects';
-import { unionBy } from "lodash"
 
 export interface UniversitiesState {
     items: IUniversity[];
@@ -19,6 +18,7 @@ export const universitiesSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder.addCase(fetchUniversities.pending, (state) => {
+            state.items = [];
             state.isLoading = true;
         })
             .addCase(fetchUniversities.fulfilled, (state, action: PayloadAction<IUniversity[]>) => {
